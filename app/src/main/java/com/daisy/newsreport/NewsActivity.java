@@ -1,7 +1,9 @@
 package com.daisy.newsreport;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +32,23 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         newsList.setAdapter(newsAdapter);
         newsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                
+            public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
+                News news = (News) parent.getAdapter().getItem(position);
+                Uri uri = Uri.parse(news.getNewsUrl());
+                openWebPage(uri);
             }
         });
         if (networkInfo != null && networkInfo.isConnected()) {
             LoaderManager loaderManager = getSupportLoaderManager();
             loaderManager.initLoader(1, null, this);
+        }
+
+    }
+
+    private void openWebPage(Uri uri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
         }
 
     }
